@@ -15,14 +15,20 @@
 		if there is a NULL buffer, NULL_BUFFER is returned and nothing is processed
 */
 
-int tokenize(char *single[],char *buffer,int max_tokens,char *delimiter) {
+int tokenize(char *single[],char *input,int max_tokens,char *delimiter) {
 	char *token;
-	int index;
+	int index = 0;
 	int i;
 	int token_flag;
+	char *buffer;
 
-	if (single == NULL || buffer == NULL || delimiter == NULL) return NULL_BUFFER; /* Handle NULL parameters */
-	if (max_tokens < 1) return MAX_TOKENS_REACHED; /* Make sure that we have at least one token */
+	if (single == NULL || input == NULL || delimiter == NULL) return NULL_BUFFER;/* Handle NULL parameters */
+
+	if (max_tokens < 1) return MAX_TOKENS_REACHED;/* Make sure that we have at least one token */
+
+	max_tokens++;
+
+	buffer = strdup(input); /* Make a copy of the string to be tokenized so that the original is not destroyed */
 
 	token = strtok(buffer,delimiter); /* Get the first token */
 
@@ -53,6 +59,8 @@ int tokenize(char *single[],char *buffer,int max_tokens,char *delimiter) {
 	}
 
 	/* Check token result flags, cleanup and return if flags tripped */
+	free (buffer); /* Free the copy string */
+
 	if (token_flag == MAX_TOKENS_REACHED)
 	{
 		for(i = 0;i < index;i++) free(single[i]);
