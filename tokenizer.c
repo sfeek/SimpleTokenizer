@@ -17,64 +17,63 @@
 
 int tokenize (char *single[], char *input, int max_tokens, char *delimiter)
 {
-    char *token;
-    int index = 0;
-    int i;
-    int token_flag;
-    char *buffer;
+	char *token;
+	int index = 0;
+	int i;
+	int token_flag;
+	char *buffer;
 
-    if (single == NULL || input == NULL || delimiter == NULL) return NULL_BUFFER;/* Handle NULL parameters */
+	if (single == NULL || input == NULL || delimiter == NULL)
+		return NULL_BUFFER;/* Handle NULL parameters */
 
-    if (max_tokens < 1) return MAX_TOKENS_REACHED;/* Make sure that we have at least one token */
+	if (max_tokens < 1)
+		return MAX_TOKENS_REACHED;/* Make sure that we have at least one token */
 
-    max_tokens++;
+	max_tokens++;
+	buffer = strdup (input); /* Make a copy of the string to be tokenized so that the original is not destroyed */
+	token = strtok (buffer, delimiter); /* Get the first token */
+	index = 0; /* Reset index counter */
+	token_flag = OK; /* Reset token flag */
 
-    buffer = strdup (input); /* Make a copy of the string to be tokenized so that the original is not destroyed */
+	while (token != NULL) /* Cycle through until the end of the buffer is reached */
+	{
+		single[index] = malloc (strlen (token) + 1); /* Make room for a copy of the token, including null terminator */
 
-    token = strtok (buffer, delimiter); /* Get the first token */
+		if (single[index] == NULL) /* Check if memory allocation failed, if so flag and leave the loop  */
+		{
+			token_flag = MEMORY_ERROR;
+			break;
+		}
 
-    index = 0; /* Reset index counter */
-    token_flag = OK; /* Reset token flag */
+		strcpy (single[index], token); /* Make copy of the token */
+		token = strtok (NULL, delimiter); /* Get the next token */
+		index++; /* Increment the index */
 
-    while (token != NULL) /* Cycle through until the end of the buffer is reached */
-    {
-        single[index] = malloc (strlen (token) + 1); /* Make room for a copy of the token, including null terminator */
+		if (index == max_tokens) /* Make sure that we do not exceed token array count, if so flag and leave the loop */
+		{
+			token_flag = MAX_TOKENS_REACHED;
+			break;
+		}
+	}
 
-        if (single[index] == NULL) /* Check if memory allocation failed, if so flag and leave the loop  */
-        {
-            token_flag = MEMORY_ERROR;
-            break;
-        }
+	/* Check token result flags, cleanup and return if flags tripped */
+	free (buffer); /* Free the copy string */
 
-        strcpy (single[index], token); /* Make copy of the token */
+	if (token_flag == MAX_TOKENS_REACHED)
+	{
+		for (i = 0; i < index; i++)
+			free (single[i]);
 
-        token = strtok (NULL, delimiter); /* Get the next token */
+		return MAX_TOKENS_REACHED;
+	}
 
-        index++; /* Increment the index */
+	if (token_flag == MEMORY_ERROR)
+	{
+		for (i = 0; i < index; i++)
+			free (single[i]);
 
-        if (index == max_tokens) /* Make sure that we do not exceed token array count, if so flag and leave the loop */
-        {
-            token_flag = MAX_TOKENS_REACHED;
-            break;
-        }
-    }
+		return MEMORY_ERROR;
+	}
 
-    /* Check token result flags, cleanup and return if flags tripped */
-    free (buffer); /* Free the copy string */
-
-    if (token_flag == MAX_TOKENS_REACHED)
-    {
-        for (i = 0; i < index; i++) free (single[i]);
-
-        return MAX_TOKENS_REACHED;
-    }
-
-    if (token_flag == MEMORY_ERROR)
-    {
-        for (i = 0; i < index; i++) free (single[i]);
-
-        return MEMORY_ERROR;
-    }
-
-    return index; /* Return number of strings created if successful */
+	return index; /* Return number of strings created if successful */
 }
