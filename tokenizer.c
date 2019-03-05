@@ -77,3 +77,17 @@ int tokenize (char *single[], char *input, int max_tokens, char *delimiter)
 
 	return index; /* Return number of strings created if successful */
 }
+
+/* Function to free token strings created by tokenizer */
+void tokenize_free (char *tokens[], int count)
+{
+	int i;
+
+	for (i = 0; i < count; i++)
+	{
+		free (tokens[i]);
+		tokens[i] = NULL;
+	}
+}
+
+

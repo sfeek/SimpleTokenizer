@@ -8,4 +8,4 @@
 #define OK 0
 
 int tokenize (char *[], char *, int, char *);
-
+void tokenize_free (char *[], int);

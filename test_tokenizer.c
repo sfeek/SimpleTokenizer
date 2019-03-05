@@ -37,8 +37,9 @@ int main (void) /* Program to demo strtok function use safely */
 	for (i = 0; i < token_flag; i++) /* Cycle through and print out the tokens */
 	{
 		printf ("%s\n", single[i]);
-		free (single[i]); /* Free up the allocated token memory! */
 	}
+
+	tokenize_free (single, token_flag); /* Cleanup */
 
 	return 0;
 }
